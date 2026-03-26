@@ -72,3 +72,13 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Logs
+*.log
+
+# Crash reports
+crashinfo-*.txt
+
+# OS files
+Thumbs.db
+.DS_Store
