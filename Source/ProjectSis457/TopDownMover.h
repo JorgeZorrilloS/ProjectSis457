@@ -29,6 +29,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	
+
 	// A visual mesh so we can actually see the object in the editor
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UStaticMeshComponent* MeshComponent;
@@ -45,9 +47,9 @@ public:
 	float Velocity;
 
 	UPROPERTY(EditAnywhere, Category = "Movement Settings")
-	EMoveDirection MoveDirection;
+		EMoveDirection MoveDirection;
 	UPROPERTY(EditAnywhere, Category = "Movement Settings")
-	bool bIsMoving;
+		bool bIsMoving;
 
 private:
 	// 3. Boolean to control the action state
