@@ -108,7 +108,30 @@ void ATopDownMover::Tick(float DeltaTime)
         case EMoveDirection::Left:
             MovementStep.Y = -1.0f;
             break;
+
+            //Movimientos en diagonal
+        case EMoveDirection::UpRight:
+            MovementStep.X = 1.0f;
+            MovementStep.Y = 1.0f;
+            break;
+
+        case EMoveDirection::UpLeft:
+            MovementStep.X = -1.0f;
+            MovementStep.Y = 1.0f;
+            break;
+
+        case EMoveDirection::DownLeft:
+            MovementStep.X = -1.0f;
+            MovementStep.Y = -1.0f;
+            break;
+
+        case EMoveDirection::DownRights:
+            MovementStep.X = 1.0f;
+            MovementStep.Y = -1.0f;
+            break;
         }
+
+        
 
         // Calculate the new position ensuring frame-rate independence using DeltaTime
         CurrentLocation += MovementStep * Velocity * DeltaTime;
