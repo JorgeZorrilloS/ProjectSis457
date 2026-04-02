@@ -13,7 +13,8 @@ ATopDownMover::ATopDownMover()
     // Set this pawn to call Tick() every frame
     PrimaryActorTick.bCanEverTick = true;
 
-
+    FVector centerLocation(0, 0, 0);
+    SetActorLocation(centerLocation);
 
     // Do NOT possess (to avoid limiting it to one object)
     AutoPossessPlayer = EAutoReceiveInput::Disabled;
@@ -46,6 +47,9 @@ ATopDownMover::ATopDownMover()
 void ATopDownMover::BeginPlay()
 {
     Super::BeginPlay();
+    FVector centerLocation(0, 0, 0);
+    SetActorLocation(centerLocation);
+
     if (GEngine)
     {
         // Parameters: Key (-1 adds a new message), Time to display, Color, and the String
