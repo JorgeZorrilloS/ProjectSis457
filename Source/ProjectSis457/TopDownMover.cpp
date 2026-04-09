@@ -28,7 +28,7 @@ ATopDownMover::ATopDownMover()
 
     // --- NEW CODE: Find and assign the Cube ---
     // We use ConstructorHelpers to find the asset path of the default Engine cube
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_TriPyramid.Shape_TriPyramid'"));
 
     // Check if we successfully found the asset to prevent crashes
     if (CubeMeshAsset.Succeeded())
@@ -99,12 +99,16 @@ void ATopDownMover::Tick(float DeltaTime)
         case EMoveDirection::Up:
             MovementStep.X = 1.0f;
             break;
+
+
         case EMoveDirection::Down:
             MovementStep.X = -1.0f;
             break;
+
         case EMoveDirection::Right:
             MovementStep.Y = 1.0f;
             break;
+
         case EMoveDirection::Left:
             MovementStep.Y = -1.0f;
             break;
@@ -116,8 +120,8 @@ void ATopDownMover::Tick(float DeltaTime)
             break;
 
         case EMoveDirection::UpLeft:
-            MovementStep.X = -1.0f;
-            MovementStep.Y = 1.0f;
+            MovementStep.X = 1.0f;
+            MovementStep.Y = -1.0f;
             break;
 
         case EMoveDirection::DownLeft:
@@ -125,13 +129,13 @@ void ATopDownMover::Tick(float DeltaTime)
             MovementStep.Y = -1.0f;
             break;
 
-        case EMoveDirection::DownRights:
-            MovementStep.X = 1.0f;
-            MovementStep.Y = -1.0f;
+        case EMoveDirection::DownRight:
+            MovementStep.X = -1.0f;
+            MovementStep.Y = 1.0f;
             break;
-        }
+        }        
 
-        
+		MovementStep = MovementStep.GetSafeNormal(); // Normalize to ensure consistent speed in diagonal movement
 
         // Calculate the new position ensuring frame-rate independence using DeltaTime
         CurrentLocation += MovementStep * Velocity * DeltaTime;
