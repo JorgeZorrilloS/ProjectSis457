@@ -10,10 +10,14 @@
 UENUM(BlueprintType)
 enum class EMoveDirection : uint8
 {
-	Up      UMETA(DisplayName = "Up"),
-	Down    UMETA(DisplayName = "Down"),
-	Left    UMETA(DisplayName = "Left"),
-	Right   UMETA(DisplayName = "Right")
+	Up        UMETA(DisplayName = "Arriba"),
+	Down      UMETA(DisplayName = "Down"),
+	Left      UMETA(DisplayName = "Left"),
+	Right     UMETA(DisplayName = "Right"),
+	UpRight   UMETA(DisplayName = "UpRight"),
+	UpLeft    UMETA(DisplayName = "UpLeft"),
+	DownLeft  UMETA(DisplayName = "DownLeft"),
+	DownRight UMETA(DisplayName = "DownRight")
 };
 
 UCLASS()
