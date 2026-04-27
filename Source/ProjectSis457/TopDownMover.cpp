@@ -1,58 +1,60 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "TopDownMover.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
-// Sets default values
+// Constructor: configura valores iniciales del Pawn
 ATopDownMover::ATopDownMover()
 {
-
-    // Set this pawn to call Tick() every frame
+    // Permite ejecutar Tick() en cada frame
     PrimaryActorTick.bCanEverTick = true;
 
+    // Posición inicial del actor en el centro del mapa
     FVector centerLocation(0, 0, 0);
     SetActorLocation(centerLocation);
 
-    // Do NOT possess (to avoid limiting it to one object)
+    // No poseer automáticamente el Pawn
     AutoPossessPlayer = EAutoReceiveInput::Disabled;
 
-    // DO automatically route Player 0's inputs to this object's stack
+    // Recibir input del Player 0
     AutoReceiveInput = EAutoReceiveInput::Player0;
 
-    // Initialize the visual component
+    // Crear el componente visual (malla)
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
     RootComponent = MeshComponent;
 
-    // --- NEW CODE: Find and assign the Cube ---
-    // We use ConstructorHelpers to find the asset path of the default Engine cube
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_TriPyramid.Shape_TriPyramid'"));
+    // Buscar y asignar una malla desde los assets del proyecto
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset(
+        TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_TriPyramid.Shape_TriPyramid'")
+    );
 
-    // Check if we successfully found the asset to prevent crashes
+    // Verificar que el asset fue encontrado correctamente
     if (CubeMeshAsset.Succeeded())
     {
         MeshComponent->SetStaticMesh(CubeMeshAsset.Object);
     }
-    // ------------------------------------------
 
-    // Set default values for our editor variables
+    // Valores iniciales de movimiento
     Velocity = 400.0f;
     MoveDirection = EMoveDirection::Right;
     bIsMoving = false;
 }
 
-// Called when the game starts or when spawned
+
+// Se ejecuta al iniciar el juego o al crear el actor
 void ATopDownMover::BeginPlay()
 {
     Super::BeginPlay();
+
+    // Asegurar posición inicial
     FVector centerLocation(0, 0, 0);
     SetActorLocation(centerLocation);
 
+    // Mostrar mensaje en pantalla
     if (GEngine)
     {
-        // Parameters: Key (-1 adds a new message), Time to display, Color, and the String
         GEngine->AddOnScreenDebugMessage(
             -1,
             5.0f,
@@ -61,45 +63,54 @@ void ATopDownMover::BeginPlay()
         );
     }
 
-    // 2. Print to the Output Log (Window > Output Log)
+    // Registrar mensaje en el Output Log
     UE_LOG(LogTemp, Warning, TEXT("Starting the game"));
 
-    // 2. Manually push this specific instance onto the Player Controller's input stack
+    // Obtener el PlayerController actual
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+    // Habilitar recepción de input
     if (PC)
     {
         UE_LOG(LogTemp, Warning, TEXT("Input player set up"));
         EnableInput(PC);
     }
 
-    // 3. Bind the action and explicitly disable event consumption (force it to bubble down)
+    // Asociar la acción de entrada al método ToggleMovement
     if (InputComponent)
     {
         UE_LOG(LogTemp, Warning, TEXT("binding fine"));
-        InputComponent->BindAction("ToggleMove", IE_Pressed, this, &ATopDownMover::ToggleMovement).bConsumeInput = false;
+
+        InputComponent->BindAction(
+            "ToggleMove",
+            IE_Pressed,
+            this,
+            &ATopDownMover::ToggleMovement
+        ).bConsumeInput = false;
     }
 }
 
-// Called every frame
+
+// Se ejecuta en cada frame
 void ATopDownMover::Tick(float DeltaTime)
 {
-    //Super::Tick(DeltaTime);
     Super::Tick(DeltaTime);
 
-    // 4. Movement Logic
+    // Lógica de movimiento
     if (bIsMoving)
     {
+        // Obtener posición actual
         FVector CurrentLocation = GetActorLocation();
+
+        // Vector de movimiento inicial
         FVector MovementStep = FVector::ZeroVector;
 
-        // Map the Enum to Unreal's top-down coordinate system
-        // Looking straight down: +X is Up, -X is Down, +Y is Right, -Y is Left
+        // Determinar dirección según el enum
         switch (MoveDirection)
         {
         case EMoveDirection::Up:
             MovementStep.X = 1.0f;
             break;
-
 
         case EMoveDirection::Down:
             MovementStep.X = -1.0f;
@@ -113,7 +124,7 @@ void ATopDownMover::Tick(float DeltaTime)
             MovementStep.Y = -1.0f;
             break;
 
-            //Movimientos en diagonal
+            // Movimiento diagonal
         case EMoveDirection::UpRight:
             MovementStep.X = 1.0f;
             MovementStep.Y = 1.0f;
@@ -133,25 +144,31 @@ void ATopDownMover::Tick(float DeltaTime)
             MovementStep.X = -1.0f;
             MovementStep.Y = 1.0f;
             break;
-        }        
+        }
 
-		MovementStep = MovementStep.GetSafeNormal(); // Normalize to ensure consistent speed in diagonal movement
+        // Normalizar el vector para mantener velocidad constante
+        MovementStep = MovementStep.GetSafeNormal();
 
-        // Calculate the new position ensuring frame-rate independence using DeltaTime
+        // Calcular nueva posición usando DeltaTime (independiente del FPS)
         CurrentLocation += MovementStep * Velocity * DeltaTime;
 
+        // Aplicar nueva posición al actor
         SetActorLocation(CurrentLocation);
-    }
 
+        // Normalización adicional (no estrictamente necesaria, pero segura)
+        MovementStep = MovementStep.GetSafeNormal();
+    }
 }
 
+
+// Configura las entradas del jugador
 void ATopDownMover::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
     UE_LOG(LogTemp, Warning, TEXT("Input player set up"));
 
-    // Bind the action AND force it to pass the input down the stack
+    // Asociar la acción de entrada
     PlayerInputComponent->BindAction(
         "ToggleMove",
         IE_Pressed,
@@ -160,24 +177,27 @@ void ATopDownMover::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
     ).bConsumeInput = false;
 }
 
+
+// Alterna el estado de movimiento
 void ATopDownMover::ToggleMovement()
 {
-    // Invert the boolean state
+    // Cambiar entre mover y detener
     bIsMoving = !bIsMoving;
 
-    // 1. Print directly to the Game Screen
+    // Mostrar estado en pantalla
     if (GEngine)
     {
-        // Parameters: Key (-1 adds a new message), Time to display, Color, and the String
         GEngine->AddOnScreenDebugMessage(
             -1,
             5.0f,
             FColor::Yellow,
-            FString::Printf(TEXT("Spacebar Pressed! bIsMoving is now: %s"), bIsMoving ? TEXT("TRUE") : TEXT("FALSE"))
+            FString::Printf(
+                TEXT("Spacebar Pressed! bIsMoving is now: %s"),
+                bIsMoving ? TEXT("TRUE") : TEXT("FALSE")
+            )
         );
     }
 
-    // 2. Print to the Output Log (Window > Output Log)
+    // Registrar evento en el Output Log
     UE_LOG(LogTemp, Warning, TEXT("Spacebar Action Listened."));
 }
-
