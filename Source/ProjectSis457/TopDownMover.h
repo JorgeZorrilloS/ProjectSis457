@@ -6,7 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "TopDownMover.generated.h"
 
-// UENUM(BlueprintType) makes it visible in the Editor dropdowns
+// Enum que define las posibles direcciones de movimiento
+// BlueprintType permite usarlo desde el Editor de Unreal
 UENUM(BlueprintType)
 enum class EMoveDirection : uint8
 {
@@ -26,41 +27,37 @@ class PROJECTSIS457_API ATopDownMover : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+	// Constructor: inicializa valores y componentes del Pawn
 	ATopDownMover();
 
 protected:
-	// Called when the game starts or when spawned
+	// Se ejecuta cuando el juego inicia o el actor es creado
 	virtual void BeginPlay() override;
 
-	
-
-	// A visual mesh so we can actually see the object in the editor
+	// Componente visual que representa el objeto en el mundo
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UStaticMeshComponent* MeshComponent;
 
-public:	
-	// Called every frame
+public:
+	// Se ejecuta en cada frame del juego
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
+	// Configura las entradas (input) del jugador
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// 2. Variables exposed to the Visual Editor
+	// Velocidad de movimiento del objeto
 	UPROPERTY(EditAnywhere, Category = "Movement Settings")
 	float Velocity;
 
+	// Dirección actual del movimiento
 	UPROPERTY(EditAnywhere, Category = "Movement Settings")
-		EMoveDirection MoveDirection;
+	EMoveDirection MoveDirection;
+
+	// Indica si el objeto está en movimiento o detenido
 	UPROPERTY(EditAnywhere, Category = "Movement Settings")
-		bool bIsMoving;
+	bool bIsMoving;
 
 private:
-	// 3. Boolean to control the action state
-	//bool bIsMoving;
-
-	// Function to listen to the Spacebar
+	// Función que alterna el estado de movimiento (activar / detener)
 	void ToggleMovement();
-
-
 };
