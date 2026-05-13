@@ -26,6 +26,11 @@ AEnemy2::AEnemy2()
 
     // Valores iniciales
     MovementSpeed = 300.0f;
+    AcceptanceRadius = 50.0f;
+
+    // Valores iniciales de puntuación
+    Score = -10;
+    ScoreIncrement = 20;
 }
 
 
@@ -59,8 +64,22 @@ void AEnemy2::GoTo(APointerActor* Target, float DeltaTime)
     FVector TargetLocation = Target->GetActorLocation();
 
     // Si el enemigo llegó al punto
-    if (FVector::Dist(CurrentLocation, TargetLocation) <= 5.0f)
+    if (FVector::Dist(CurrentLocation, TargetLocation) <= AcceptanceRadius)
     {
+        // Aumentar puntuación
+        Score += ScoreIncrement;
+
+        // Mostrar puntuación en pantalla
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(
+                -1,
+                2.0f,
+                FColor::Green,
+                FString::Printf(TEXT("Score: %d"), Score)
+            );
+        }
+
         // Avanzar al siguiente punto (patrulla en bucle)
         CurrentPointIndex =
             (CurrentPointIndex + 1) % PatrolPoints.Num();

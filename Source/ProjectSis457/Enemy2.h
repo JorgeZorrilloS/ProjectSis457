@@ -39,6 +39,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MovementSpeed;
 
+	// Distancia mínima para considerar que llegó al punto
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float AcceptanceRadius;
+
+	// Puntuación actual
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Score")
+	int32 Score;
+
+	// Cantidad que se suma cada vez
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Score")
+	int32 ScoreIncrement;
+
 private:
 
 	// Índice del punto actual en la patrulla
@@ -46,5 +58,4 @@ private:
 
 	// Mueve el enemigo hacia el punto objetivo
 	void GoTo(APointerActor* Target, float DeltaTime);
-
 };
