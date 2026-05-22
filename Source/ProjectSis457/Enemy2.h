@@ -5,6 +5,7 @@
 #include "Enemy2.generated.h"
 
 class APointerActor;
+class AStaticMeshActor;
 
 UCLASS()
 class PROJECTSIS457_API AEnemy2 : public AActor
@@ -51,10 +52,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Score")
 	int32 ScoreIncrement;
 
+	// Diccionario
+	// Key -> Material/Color
+	// Value -> Cubo asociado 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	TMap<UMaterialInterface*, AStaticMeshActor*> Dictionary;
+
 private:
 
 	// Índice del punto actual en la patrulla
-	int32 CurrentPointIndex = 0;
+	int32 CurrentPointIndex;
 
 	// Mueve el enemigo hacia el punto objetivo
 	void GoTo(APointerActor* Target, float DeltaTime);
